@@ -31,19 +31,23 @@ function agregarCurso(e){
 
         if(e.target.classList.contains("agregar-carrito")){
         const cursoSeleccionado = e.target.parentElement.parentElement;
-
         
-    Swal.fire({
-        title: "¿Quieres agregar este curso?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "¡Sí, agregar!",
-        cancelButtonText: "Cancelar",
-    })
-
-        leerDatosCurso(cursoSeleccionado);
+        Swal.fire({
+            title: "¿Quieres agregar este curso?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "¡Sí, agregar!",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                leerDatosCurso(cursoSeleccionado);
+                Swal.fire("Agregado", "", "success");
+            } else {
+                Swal.fire("Agregar cancelado", "", "info");
+            }
+        });        
 
     }
 }
@@ -51,33 +55,47 @@ function agregarCurso(e){
 //elimina un curso del carrito
 function eliminarCurso(e){
     //console.log(e.target.classList);
-    Swal.fire({
-        title: "¿Quieres eliminar este curso?",
-        text: "Procederás a eliminar el curso del carrito",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "¡Sí, eliminar!",
-        cancelButtonText: "Cancelar",
-    })
-        if(e.target.classList.contains("borrar-curso")){
-            console.log(e.target);
-            const cursoId = e.target.getAttribute("data-id");
 
-         // Resta del carrito el curso seleccionado por cantidad
-            idx = articulosCarrito.findIndex( curso => curso.id === cursoId);
-            articulosCarrito[idx].cantidad --;
-         //Elimina del arreglo por el id cuando la cantidad llegue a 0
+    if(e.target.classList.contains("borrar-curso")){
+
+
+        Swal.fire({
+            title: "¿Quieres eliminar este curso?",
+            text: "Procederás a eliminar el curso del carrito",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "¡Sí, eliminar!",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const cursoId = e.target.getAttribute("data-id");
+
+                // Resta del carrito el curso seleccionado por cantidad
+                idx = articulosCarrito.findIndex( curso => curso.id === cursoId);
+                articulosCarrito[idx].cantidad --;
+                //Elimina del arreglo por el id cuando la cantidad llegue a 0
                 if (!articulosCarrito[idx].cantidad) {            
                 articulosCarrito = articulosCarrito.filter(curso => curso.id !== cursoId);
                 }   
+        
+                //elimina del arreglo de articulosCarrito por el data-id
+                //articulosCarrito = articulosCarrito.filter(curso => curso.id !== cursoId);
+            
+                carritoHTML(); //iterar sobre el carrito y mostrar su HTML
 
-        //elimina del arreglo de articulosCarrito por el data-id
-        //articulosCarrito = articulosCarrito.filter(curso => curso.id !== cursoId);
-    
+                Swal.fire("Eliminado", "", "success");
+            } else {
+                Swal.fire("Eliminación cancelada", "", "info");
+            }
+        });        
 
-        carritoHTML(); //iterar sobre el carrito y mostrar su HTML
+
+
+        
+
           
         }
     }
